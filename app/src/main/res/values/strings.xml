@@ -6,4 +6,5 @@
     <string name="sending_form_error_message">Nie udało się zapisać odpowiedzi.</string>
     <string name="fetching_form_error_message">Nie udało się pobrać formularza.</string>
     <string name="success_message">Odpowiedzi zostały zapisane pomyślnie.</string>
+    <string name="invalid_postal_code">Błędny kod pocztowy! \nPoprawna forma kodu to: xx-xxx.</string>
 </resources>

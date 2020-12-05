@@ -1,7 +1,6 @@
 package com.simpleform.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +55,7 @@ class MainFragment : Fragment() {
 
         btnSave.setOnClickListener {
             Timber.d("Data: ${ElementsAdapter.editElements}")
-            viewModel.sendFilledForm(ElementsAdapter.editElements)
+            viewModel.validate(ElementsAdapter.editElements)
         }
     }
 
@@ -73,7 +72,7 @@ class MainFragment : Fragment() {
             }
         })
 
-        viewModel.isUpdating().observe(viewLifecycleOwner, {
+        viewModel.isUpdating.observe(viewLifecycleOwner, {
             if (it) {
                 showLoadingIndicator(
                     getString(R.string.please_wait_text)
@@ -90,6 +89,16 @@ class MainFragment : Fragment() {
                 showSendingError()
             }
         })
+
+        viewModel.invalidPostal.observe(viewLifecycleOwner, {
+            if (it) {
+                showInvalidPostalError()
+            }
+        })
+    }
+
+    private fun showInvalidPostalError() {
+        showSnackBar(getString(R.string.invalid_postal_code))
     }
 
     private fun showFetchingError() {

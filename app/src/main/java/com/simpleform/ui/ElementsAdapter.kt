@@ -20,7 +20,7 @@ class ElementsAdapter(
     // I'm aware of that it's quite poor solution,
     // but I couldn't find better one to get edit text inputs
     companion object {
-        var editElements: ArrayList<FormElement>? = null
+        lateinit var editElements: ArrayList<FormElement>
     }
 
     init {
@@ -33,7 +33,7 @@ class ElementsAdapter(
 
             itemView.etElementInput.doAfterTextChanged {
                 // save user input
-                editElements?.get(adapterPosition)?.response =
+                editElements[adapterPosition].response =
                     itemView.etElementInput.text.toString()
             }
 
