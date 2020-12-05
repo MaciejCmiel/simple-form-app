@@ -35,6 +35,9 @@ class MainFragment : Fragment() {
         viewModel = ViewModelProvider(this, ViewModelFactory()).get(MainViewModel::class.java)
 
         setupObserver()
+        showLoadingIndicator(
+            getString(R.string.fetching_form_text)
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,8 +62,7 @@ class MainFragment : Fragment() {
     private fun setupObserver() {
         viewModel.getElements().observe(viewLifecycleOwner, {
 
-            loadingIndicator.visibility = View.GONE
-            tvLoadingIndicator.visibility = View.GONE
+            hideLoadingIndicator()
 
             if (it == null) {
                 //TODO show error
@@ -70,6 +72,49 @@ class MainFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         })
+
+        viewModel.isUpdating().observe(viewLifecycleOwner, {
+            if (it) {
+                showLoadingIndicator(
+                    getString(R.string.please_wait_text)
+                )
+            } else {
+                hideLoadingIndicator()
+            }
+        })
+
+        viewModel.updateFinishedSuccessfully.observe(viewLifecycleOwner, {
+            if (it) {
+                showSuccess()
+            } else {
+                showError()
+            }
+        })
+    }
+
+    private fun showError() {
+        hideLoadingIndicator()
+        tvLoadingIndicator.visibility = View.VISIBLE
+        tvLoadingIndicator.text = getString(R.string.error_message)
+    }
+
+    private fun showSuccess() {
+        hideLoadingIndicator()
+        tvLoadingIndicator.visibility = View.VISIBLE
+        tvLoadingIndicator.text = getString(R.string.success_message)
+    }
+
+    private fun showLoadingIndicator(loadingText: String) {
+        loadingIndicator.visibility = View.VISIBLE
+        tvLoadingIndicator.visibility = View.VISIBLE
+        tvLoadingIndicator.text = loadingText
+        btnSave.text = ""
+    }
+
+    private fun hideLoadingIndicator() {
+        loadingIndicator.visibility = View.GONE
+        tvLoadingIndicator.visibility = View.GONE
+        btnSave.text = getString(R.string.save_button_text)
     }
 
 }

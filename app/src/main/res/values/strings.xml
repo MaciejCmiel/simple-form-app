@@ -2,4 +2,7 @@
     <string name="app_name">Simple form App</string>
     <string name="fetching_form_text">Trwa ładowanie formularza…</string>
     <string name="save_button_text">Zapisz i wyślij</string>
+    <string name="please_wait_text">Prosze czekać, trwa zapisywanie odpowiedzi…</string>
+    <string name="error_message">Nie udało się zapisać odpowiedzi.</string>
+    <string name="success_message">Odpowiedzi zostały zapisane pomyślnie.</string>
 </resources>

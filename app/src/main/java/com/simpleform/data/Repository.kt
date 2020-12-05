@@ -3,8 +3,11 @@ package com.simpleform.data
 import com.simpleform.data.model.FormElement
 import com.simpleform.data.model.TextType
 import com.simpleform.data.model.Type
-import io.reactivex.Observable
+import com.simpleform.data.retrofit.SuccessResponse
+import io.reactivex.Completable
+import io.reactivex.Single
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 
 class Repository() {
@@ -14,9 +17,9 @@ class Repository() {
      *
      * @return Observable list of form elements
      */
-    fun getFormElements(): Observable<List<FormElement>> {
-        return Observable.just(generateList())
-            .delay(3000, TimeUnit.MILLISECONDS)
+    fun getFormElements(): Single<List<FormElement>> {
+        return Single.just(generateList())
+            .delay(3, TimeUnit.SECONDS)
 
     }
 
@@ -27,6 +30,22 @@ class Repository() {
             FormElement("Kod pocztowy", Type.TEXT_FIELD, TextType.POSTAL),
             FormElement("Adres", Type.TEXT_FIELD, TextType.TEXT)
         )
+    }
+
+    /**
+     * Send form to server
+     */
+    fun sendFilledForm(filledForm: List<FormElement>): Single<SuccessResponse> {
+        return Single.just(SuccessResponse())
+            .delay(Random.nextLong(3, 6), TimeUnit.SECONDS)
+    }
+
+    /**
+     * Save form to local database
+     */
+    fun saveFilledForm(filledForm: List<FormElement>): Completable {
+        return Completable.complete()
+            .delay(Random.nextLong(2, 5), TimeUnit.SECONDS)
     }
 
 }
