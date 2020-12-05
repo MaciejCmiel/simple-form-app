@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Simple form App</string>
+    <string name="fetching_form_text">Trwa ładowanie formularza…</string>
+    <string name="save_button_text">Zapisz i wyślij</string>
 </resources>
