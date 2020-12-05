@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.simpleform.R
 import com.simpleform.data.model.FormElement
+import com.simpleform.data.model.TextType
+import com.simpleform.data.model.Type
 import kotlinx.android.synthetic.main.list_element.view.*
+
 
 class ElementsAdapter(
     private val elements: ArrayList<FormElement>
@@ -17,9 +20,42 @@ class ElementsAdapter(
         fun bind(formElement: FormElement) {
             itemView.elementName.text = formElement.name
 
-            // TODO set proper input type and hint based on element type
-            itemView.elementInput.inputType = InputType.TYPE_CLASS_TEXT
-            itemView.elementInput.hint = ""
+            when (formElement.type) {
+                Type.TEXT_FIELD -> {
+
+                    when (formElement.textType) {
+                        TextType.TEXT -> {
+                            itemView.etElementInput.inputType = InputType.TYPE_CLASS_PHONE
+                        }
+                        TextType.PHONE -> {
+                            itemView.etElementInput.inputType = InputType.TYPE_CLASS_PHONE
+                        }
+                        TextType.POSTAL -> {
+
+                            itemView.etElementInput.setOnFocusChangeListener { _, hasFocus ->
+                                (
+                                        if (hasFocus) {
+                                            itemView.frameAlert.visibility = View.INVISIBLE
+
+                                        } else {
+                                            // Check out if postal code match pattern
+                                            if (!itemView.etElementInput.text.matches(Regex("[0-9]{2}[-][0-9]{3}"))) {
+                                                itemView.frameAlert.visibility = View.VISIBLE
+                                            }
+                                        }
+                                        )
+                            }
+
+                            itemView.etElementInput.inputType =
+                                InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS
+                        }
+                    }
+                }
+                Type.PICTURE -> {
+                    // TODO add gallery picker
+
+                }
+            }
 
 
         }
