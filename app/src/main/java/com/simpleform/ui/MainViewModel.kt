@@ -24,8 +24,8 @@ class MainViewModel(private val mainRepository: Repository) : ViewModel() {
             mainRepository.getFormElements()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ userList ->
-                    elements.postValue(userList)
+                .subscribe({ elementsList ->
+                    elements.postValue(elementsList)
                 }, { throwable ->
                     elements.value = null
                     Timber.d(throwable)
