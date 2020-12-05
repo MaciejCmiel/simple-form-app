@@ -37,6 +37,11 @@ class MainViewModel(private val mainRepository: Repository) : ViewModel() {
         return elements
     }
 
+    fun sendFilledForm(filledForm: List<FormElement>?) {
+
+
+    }
+
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()

@@ -4,6 +4,7 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.simpleform.R
 import com.simpleform.data.model.FormElement
@@ -16,9 +17,25 @@ class ElementsAdapter(
     private val elements: ArrayList<FormElement>
 ) : RecyclerView.Adapter<ElementsAdapter.DataViewHolder>() {
 
+    // I'm aware of that it's quite poor solution,
+    // but I couldn't find better one to get edit text inputs
+    companion object {
+        var editElements: ArrayList<FormElement>? = null
+    }
+
+    init {
+        editElements = elements
+    }
+
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(formElement: FormElement) {
             itemView.elementName.text = formElement.name
+
+            itemView.etElementInput.doAfterTextChanged {
+                // save user input
+                editElements?.get(adapterPosition)?.response =
+                    itemView.etElementInput.text.toString()
+            }
 
             when (formElement.type) {
                 Type.TEXT_FIELD -> {

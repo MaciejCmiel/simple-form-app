@@ -1,6 +1,7 @@
 package com.simpleform.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.simpleform.R
 import com.simpleform.ViewModelFactory
 import kotlinx.android.synthetic.main.main_fragment.*
+import timber.log.Timber
 
 class MainFragment : Fragment() {
 
@@ -47,6 +49,11 @@ class MainFragment : Fragment() {
             )
         )
         recyclerView.adapter = adapter
+
+        btnSave.setOnClickListener {
+            Timber.d("Data: ${ElementsAdapter.editElements}")
+            viewModel.sendFilledForm(ElementsAdapter.editElements)
+        }
     }
 
     private fun setupObserver() {
