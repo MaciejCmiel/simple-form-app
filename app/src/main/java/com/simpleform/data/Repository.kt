@@ -4,7 +4,6 @@ import com.simpleform.data.model.FormElement
 import com.simpleform.data.model.TextType
 import com.simpleform.data.model.Type
 import com.simpleform.data.retrofit.SuccessResponse
-import io.reactivex.Completable
 import io.reactivex.Single
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -42,9 +41,11 @@ class Repository() {
 
     /**
      * Save form to local database
+     *
+     * @return row id of the item inserted
      */
-    fun saveFilledForm(filledForm: List<FormElement>): Completable {
-        return Completable.complete()
+    fun saveFilledForm(filledForm: List<FormElement>): Single<Long> {
+        return Single.just(Random.nextLong())
             .delay(Random.nextLong(2, 5), TimeUnit.SECONDS)
     }
 

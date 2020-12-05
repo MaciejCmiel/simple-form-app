@@ -55,20 +55,26 @@ class MainViewModel(
             return
         }
 
+
         compositeDisposable.add(
             mainRepository.sendFilledForm(filledForm)
+                .zipWith(mainRepository.saveFilledForm(filledForm))
+                { _, _ -> true }
                 .subscribeOn(processScheduler)
                 .observeOn(androidScheduler)
                 .subscribe({
-                    //TODO show success
 
-                    _updateFinishedSuccessfully.postValue(true)
+                    Timber.d("Updated successfully!")
+
                     isUpdating.postValue(false)
+                    _updateFinishedSuccessfully.postValue(true)
 
                 }, { throwable ->
 
-                    _updateFinishedSuccessfully.postValue(false)
+                    Timber.d("Update failed!")
+
                     isUpdating.postValue(false)
+                    _updateFinishedSuccessfully.postValue(false)
                     Timber.d(throwable)
                 })
         )
