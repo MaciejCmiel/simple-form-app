@@ -1,6 +1,5 @@
 package com.simpleform.ui
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.simpleform.data.Repository
@@ -16,8 +15,11 @@ class MainViewModel(
     private val androidScheduler: Scheduler
 ) : ViewModel() {
 
-    private val elements = MutableLiveData<List<FormElement>>()
     private val compositeDisposable = CompositeDisposable()
+
+    private val _elements = MutableLiveData<List<FormElement>>()
+    val elements = _elements
+
     private val _isUpdating = MutableLiveData<Boolean>()
     val isUpdating = _isUpdating
 
@@ -37,23 +39,26 @@ class MainViewModel(
                 .subscribeOn(processScheduler)
                 .observeOn(androidScheduler)
                 .subscribe({ elementsList ->
-                    elements.postValue(elementsList)
+                    _elements.postValue(elementsList)
                 }, { throwable ->
-                    elements.value = null
+                    _elements.value = null
                     Timber.d(throwable)
                 })
         )
     }
 
-    fun getElements(): LiveData<List<FormElement>> {
-        return elements
-    }
-
     /**
      * Validate postal code before saving response
      */
-    fun validate(filledForm: List<FormElement>) {
+    fun validate() {
 
+        Timber.d("Data: ${elements.value}")
+
+        val filledForm = elements.value
+        if (filledForm.isNullOrEmpty()) {
+            invalidPostal.postValue(true)
+            return
+        }
         var isValid = true
         for (formElement in filledForm) {
             if (formElement.textType == TextType.POSTAL) {

@@ -17,23 +17,13 @@ class ElementsAdapter(
     private val elements: ArrayList<FormElement>
 ) : RecyclerView.Adapter<ElementsAdapter.DataViewHolder>() {
 
-    // I'm aware of that it's quite poor solution,
-    // but I couldn't find better one to get edit text inputs
-    companion object {
-        lateinit var editElements: ArrayList<FormElement>
-    }
-
-    init {
-        editElements = elements
-    }
-
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(formElement: FormElement) {
             itemView.elementName.text = formElement.name
 
             itemView.etElementInput.doAfterTextChanged {
                 // save user input
-                editElements[adapterPosition].response =
+                formElement.response =
                     itemView.etElementInput.text.toString()
             }
 

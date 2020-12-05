@@ -12,7 +12,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.simpleform.R
 import com.simpleform.ViewModelFactory
 import kotlinx.android.synthetic.main.main_fragment.*
-import timber.log.Timber
 
 class MainFragment : Fragment() {
 
@@ -54,13 +53,12 @@ class MainFragment : Fragment() {
         recyclerView.adapter = adapter
 
         btnSave.setOnClickListener {
-            Timber.d("Data: ${ElementsAdapter.editElements}")
-            viewModel.validate(ElementsAdapter.editElements)
+            viewModel.validate()
         }
     }
 
     private fun setupObserver() {
-        viewModel.getElements().observe(viewLifecycleOwner, {
+        viewModel.elements.observe(viewLifecycleOwner, {
 
             hideLoadingIndicator()
 
