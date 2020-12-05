@@ -1,14 +1,16 @@
 package com.simpleform.ui
 
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.simpleform.R
 import com.simpleform.data.model.FormElement
 import com.simpleform.data.model.TextType
 import com.simpleform.data.model.Type
+import com.simpleform.databinding.ListElementBinding
 import kotlinx.android.synthetic.main.list_element.view.*
 
 
@@ -16,9 +18,33 @@ class ElementsAdapter(
     private val elements: ArrayList<FormElement>
 ) : RecyclerView.Adapter<ElementsAdapter.DataViewHolder>() {
 
-    class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    class DataViewHolder(private val binding: ListElementBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+
         fun bind(formElement: FormElement) {
-            itemView.elementName.text = formElement.name
+
+            binding.formElement = formElement
+
+            itemView.etElementInput.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                    //blank
+                }
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    //blank;
+                }
+
+                override fun afterTextChanged(s: Editable) {
+
+                }
+            })
 
             when (formElement.type) {
                 Type.TEXT_FIELD -> {
@@ -57,14 +83,15 @@ class ElementsAdapter(
                 }
             }
 
-
         }
     }
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         DataViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.list_element, parent,
+            ListElementBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
                 false
             )
         )
@@ -77,5 +104,4 @@ class ElementsAdapter(
     fun addData(list: List<FormElement>) {
         elements.addAll(list)
     }
-
 }
