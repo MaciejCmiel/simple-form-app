@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.simpleform.R
 import com.simpleform.ViewModelFactory
 import kotlinx.android.synthetic.main.main_fragment.*
@@ -65,8 +66,7 @@ class MainFragment : Fragment() {
             hideLoadingIndicator()
 
             if (it == null) {
-                //TODO show error
-
+                showFetchingError()
             } else {
                 adapter.addData(it)
                 adapter.notifyDataSetChanged()
@@ -87,21 +87,32 @@ class MainFragment : Fragment() {
             if (it) {
                 showSuccess()
             } else {
-                showError()
+                showSendingError()
             }
         })
     }
 
-    private fun showError() {
+    private fun showFetchingError() {
         hideLoadingIndicator()
-        tvLoadingIndicator.visibility = View.VISIBLE
-        tvLoadingIndicator.text = getString(R.string.error_message)
+        showSnackBar(getString(R.string.fetching_form_error_message))
+    }
+
+    private fun showSendingError() {
+        hideLoadingIndicator()
+        showSnackBar(getString(R.string.sending_form_error_message))
     }
 
     private fun showSuccess() {
         hideLoadingIndicator()
-        tvLoadingIndicator.visibility = View.VISIBLE
-        tvLoadingIndicator.text = getString(R.string.success_message)
+        showSnackBar(getString(R.string.success_message))
+    }
+
+    private fun showSnackBar(string: String) {
+        Snackbar.make(
+            requireView(),
+            string,
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 
     private fun showLoadingIndicator(loadingText: String) {
@@ -109,12 +120,15 @@ class MainFragment : Fragment() {
         tvLoadingIndicator.visibility = View.VISIBLE
         tvLoadingIndicator.text = loadingText
         btnSave.text = ""
+        // prevent multiple clicks
+        btnSave.isEnabled = false
     }
 
     private fun hideLoadingIndicator() {
         loadingIndicator.visibility = View.GONE
         tvLoadingIndicator.visibility = View.GONE
         btnSave.text = getString(R.string.save_button_text)
+        btnSave.isEnabled = true
     }
 
 }
