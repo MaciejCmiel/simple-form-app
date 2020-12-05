@@ -2,7 +2,7 @@ package com.simpleform
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.simpleform.ui.main.MainFragment
+import com.simpleform.ui.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
