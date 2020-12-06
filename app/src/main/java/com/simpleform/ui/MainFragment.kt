@@ -1,6 +1,9 @@
 package com.simpleform.ui
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +15,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.simpleform.R
 import com.simpleform.ViewModelFactory
 import kotlinx.android.synthetic.main.main_fragment.*
+import timber.log.Timber
+
 
 class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
+        private const val PICK_IMAGE = 100
     }
 
     private lateinit var viewModel: MainViewModel
@@ -54,6 +60,7 @@ class MainFragment : Fragment() {
 
         btnSave.setOnClickListener {
             viewModel.validate()
+//            openGallery()
         }
     }
 
@@ -94,6 +101,21 @@ class MainFragment : Fragment() {
                 showInvalidPostalError()
             }
         })
+    }
+
+    private fun openGallery() {
+        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(gallery, PICK_IMAGE)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+            Timber.d("Picture: ${data?.data}")
+//            imageView.setImageURI(imageUri);
+        }
     }
 
     private fun showInvalidPostalError() {
