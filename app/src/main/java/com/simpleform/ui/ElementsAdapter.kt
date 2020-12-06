@@ -1,11 +1,13 @@
 package com.simpleform.ui
 
+import android.net.Uri
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.simpleform.R
 import com.simpleform.data.model.FormElement
 import com.simpleform.data.model.TextType
@@ -89,9 +91,12 @@ class ElementsAdapter(
         fun bind(formElement: FormElement) {
             itemView.elementName.text = formElement.name
 
-            itemView.ivElementInput
-            // save user input
-            formElement.response //=
+
+            val imageUri = Uri.parse(formElement.response)
+            if (imageUri != null)
+                Glide.with(itemView.context)
+                    .load(imageUri)
+                    .into(itemView.ivElementInput)
 
             itemView.ivElementInput.setOnClickListener {
                 psOnClick.onNext(adapterPosition)

@@ -106,7 +106,16 @@ class MainFragment : Fragment() {
         })
 
         viewModel.openGallery.observe(viewLifecycleOwner, {
-            openGallery()
+            if (it.second) {
+                openGallery()
+                // Publish next pair with false as onClick already triggered openGallery
+                // prevent opens on rotation *\xF0\x9F\x98\x85*
+                viewModel.openGallery.postValue(it.first to false)
+            }
+        })
+
+        viewModel.pictureUpdated.observe(viewLifecycleOwner, {
+            adapter.notifyDataSetChanged()
         })
     }
 
@@ -121,8 +130,7 @@ class MainFragment : Fragment() {
 
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
             Timber.d("Picture: ${data?.data}")
-            viewModel.setImage()
-//            imageView.setImageURI(imageUri);
+            viewModel.setImage(data?.data)
         }
     }
 
