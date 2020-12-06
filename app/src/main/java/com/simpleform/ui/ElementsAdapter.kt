@@ -11,11 +11,14 @@ import com.simpleform.data.model.FormElement
 import com.simpleform.data.model.TextType
 import com.simpleform.data.model.Type
 import kotlinx.android.synthetic.main.list_element.view.*
+import kotlinx.android.synthetic.main.list_element.view.elementName
+import kotlinx.android.synthetic.main.list_element.view.frameAlert
+import kotlinx.android.synthetic.main.list_element_picture.view.*
 
 
 class ElementsAdapter(
     private val elements: ArrayList<FormElement>
-) : RecyclerView.Adapter<ElementsAdapter.DataViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(formElement: FormElement) {
@@ -27,59 +30,85 @@ class ElementsAdapter(
                     itemView.etElementInput.text.toString()
             }
 
-            when (formElement.type) {
-                Type.TEXT_FIELD -> {
-
-                    when (formElement.textType) {
-                        TextType.TEXT -> {
-                            itemView.etElementInput.inputType = InputType.TYPE_CLASS_PHONE
-                        }
-                        TextType.PHONE -> {
-                            itemView.etElementInput.inputType = InputType.TYPE_CLASS_PHONE
-                        }
-                        TextType.POSTAL -> {
-
-                            itemView.etElementInput.setOnFocusChangeListener { _, hasFocus ->
-                                (
-                                        if (hasFocus) {
-                                            itemView.frameAlert.visibility = View.INVISIBLE
-
-                                        } else {
-                                            // Check out if postal code match pattern
-                                            if (!itemView.etElementInput.text.matches(Regex("[0-9]{2}[-][0-9]{3}"))) {
-                                                itemView.frameAlert.visibility = View.VISIBLE
-                                            }
-                                        }
-                                        )
-                            }
-
-                            itemView.etElementInput.inputType =
-                                InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS
-                        }
-                    }
+            when (formElement.textType) {
+                TextType.TEXT -> {
+                    itemView.etElementInput.inputType = InputType.TYPE_CLASS_TEXT
                 }
-                Type.PICTURE -> {
-                    // TODO add gallery picker
+                TextType.PHONE -> {
+                    itemView.etElementInput.inputType = InputType.TYPE_CLASS_PHONE
+                }
+                TextType.POSTAL -> {
 
+                    itemView.etElementInput.setOnFocusChangeListener { _, hasFocus ->
+                        (
+                                if (hasFocus) {
+                                    itemView.frameAlert.visibility = View.INVISIBLE
+
+                                } else {
+                                    // Check out if postal code match pattern
+                                    if (!itemView.etElementInput.text.matches(Regex("[0-9]{2}[-][0-9]{3}"))) {
+                                        itemView.frameAlert.visibility = View.VISIBLE
+                                    }
+                                }
+                                )
+                    }
+
+                    itemView.etElementInput.inputType =
+                        InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS
                 }
             }
-
 
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        DataViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.list_element, parent,
-                false
+    class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(formElement: FormElement) {
+            itemView.elementName.text = formElement.name
+
+            itemView.ivElementInput
+            // save user input
+            formElement.response //=
+
+
+            itemView.setOnClickListener {
+                // TODO open gallery
+            }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (elements[position].type) {
+            Type.PICTURE -> 0
+            else -> 1
+        }
+
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            0 -> PictureViewHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.list_element_picture, parent,
+                    false
+                )
             )
-        )
+            else -> DataViewHolder(
+                LayoutInflater.from(parent.context).inflate(
+                    R.layout.list_element, parent,
+                    false
+                )
+            )
+        }
+    }
 
     override fun getItemCount(): Int = elements.size
 
-    override fun onBindViewHolder(holder: DataViewHolder, position: Int) =
-        holder.bind(elements[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder.itemViewType) {
+            0 -> (holder as PictureViewHolder).bind(elements[position])
+            else -> (holder as DataViewHolder).bind(elements[position])
+        }
+    }
 
     fun addData(list: List<FormElement>) {
         elements.addAll(list)
