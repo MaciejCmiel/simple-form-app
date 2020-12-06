@@ -39,6 +39,8 @@ class MainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, ViewModelFactory()).get(MainViewModel::class.java)
 
+        setupAdapter()
+
         setupObserver()
         showLoadingIndicator(
             getString(R.string.fetching_form_text)
@@ -48,8 +50,14 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        btnSave.setOnClickListener {
+            viewModel.validate()
+        }
+    }
+
+    private fun setupAdapter() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = ElementsAdapter(arrayListOf())
+        adapter = ElementsAdapter(arrayListOf(), viewModel)
         recyclerView.addItemDecoration(
             DividerItemDecoration(
                 recyclerView.context,
@@ -57,11 +65,6 @@ class MainFragment : Fragment() {
             )
         )
         recyclerView.adapter = adapter
-
-        btnSave.setOnClickListener {
-            viewModel.validate()
-//            openGallery()
-        }
     }
 
     private fun setupObserver() {
@@ -101,6 +104,10 @@ class MainFragment : Fragment() {
                 showInvalidPostalError()
             }
         })
+
+        viewModel.openGallery.observe(viewLifecycleOwner, {
+            openGallery()
+        })
     }
 
     private fun openGallery() {
@@ -114,6 +121,7 @@ class MainFragment : Fragment() {
 
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
             Timber.d("Picture: ${data?.data}")
+            viewModel.setImage()
 //            imageView.setImageURI(imageUri);
         }
     }

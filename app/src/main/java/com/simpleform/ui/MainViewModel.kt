@@ -7,6 +7,7 @@ import com.simpleform.data.model.FormElement
 import com.simpleform.data.model.TextType
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 
 class MainViewModel(
@@ -28,6 +29,9 @@ class MainViewModel(
 
     private val _invalidPostal = MutableLiveData<Boolean>()
     val invalidPostal = _invalidPostal
+
+    private val _openGallery = MutableLiveData<Int>()
+    val openGallery = _openGallery
 
     init {
         getFormElements()
@@ -108,8 +112,25 @@ class MainViewModel(
 
     }
 
+    // Just didn't have better solution that time
+    fun subscribeToPsOnClick(psOnClick: PublishSubject<Int>) {
+        compositeDisposable.add(
+            psOnClick.subscribeOn(processScheduler)
+                .observeOn(androidScheduler)
+                .subscribe { position ->
+                    _openGallery.postValue(position)
+
+                }
+        )
+    }
+
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()
+    }
+
+    fun setImage() {
+        Timber.d("Image position: ${openGallery.value}")
+//        TODO("Not yet implemented")
     }
 }

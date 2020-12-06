@@ -10,6 +10,7 @@ import com.simpleform.R
 import com.simpleform.data.model.FormElement
 import com.simpleform.data.model.TextType
 import com.simpleform.data.model.Type
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.list_element.view.*
 import kotlinx.android.synthetic.main.list_element.view.elementName
 import kotlinx.android.synthetic.main.list_element.view.frameAlert
@@ -17,8 +18,10 @@ import kotlinx.android.synthetic.main.list_element_picture.view.*
 
 
 class ElementsAdapter(
-    private val elements: ArrayList<FormElement>
+    private val elements: ArrayList<FormElement>,
+    private val viewModel: MainViewModel
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(formElement: FormElement) {
@@ -81,6 +84,8 @@ class ElementsAdapter(
     }
 
     class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val psOnClick: PublishSubject<Int> = PublishSubject.create()
+
         fun bind(formElement: FormElement) {
             itemView.elementName.text = formElement.name
 
@@ -88,11 +93,11 @@ class ElementsAdapter(
             // save user input
             formElement.response //=
 
-
-            itemView.setOnClickListener {
-                // TODO open gallery
+            itemView.ivElementInput.setOnClickListener {
+                psOnClick.onNext(adapterPosition)
             }
         }
+
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -100,7 +105,6 @@ class ElementsAdapter(
             Type.PICTURE -> 0
             else -> 1
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -124,7 +128,10 @@ class ElementsAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder.itemViewType) {
-            0 -> (holder as PictureViewHolder).bind(elements[position])
+            0 -> {
+                (holder as PictureViewHolder).bind(elements[position])
+                viewModel.subscribeToPsOnClick(holder.psOnClick)
+            }
             else -> (holder as DataViewHolder).bind(elements[position])
         }
     }
