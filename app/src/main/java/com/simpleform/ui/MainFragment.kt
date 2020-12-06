@@ -83,6 +83,7 @@ class MainFragment : Fragment() {
         viewModel.updateFinishedSuccessfully.observe(viewLifecycleOwner, {
             if (it) {
                 showSuccess()
+                adapter.notifyDataSetChanged()
             } else {
                 showSendingError()
             }

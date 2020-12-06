@@ -22,35 +22,54 @@ class ElementsAdapter(
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(formElement: FormElement) {
+            // Enable save only when user is focused on the field
+            // prevent overwriting text when recycling view
+            var enableSave = false
             itemView.elementName.text = formElement.name
+            itemView.frameAlert.visibility = View.INVISIBLE
+            itemView.etElementInput.setText(formElement.response)
 
             itemView.etElementInput.doAfterTextChanged {
-                // save user input
-                formElement.response =
-                    itemView.etElementInput.text.toString()
+                // save user input only when user is focused on field
+                if (enableSave) {
+                    formElement.response =
+                        itemView.etElementInput.text.toString()
+                }
             }
+
 
             when (formElement.textType) {
                 TextType.TEXT -> {
                     itemView.etElementInput.inputType = InputType.TYPE_CLASS_TEXT
+                    itemView.etElementInput.setOnFocusChangeListener { _, hasFocus ->
+                        // Couldn't simplify it as only expressions allowed here
+                        (if (hasFocus) enableSave = true
+                        else enableSave = false
+                                )
+                    }
                 }
                 TextType.PHONE -> {
                     itemView.etElementInput.inputType = InputType.TYPE_CLASS_PHONE
+                    itemView.etElementInput.setOnFocusChangeListener { _, hasFocus ->
+                        // Couldn't simplify it as only expressions allowed here
+                        (if (hasFocus) enableSave = true
+                        else enableSave = false
+                                )
+                    }
                 }
                 TextType.POSTAL -> {
 
                     itemView.etElementInput.setOnFocusChangeListener { _, hasFocus ->
-                        (
-                                if (hasFocus) {
-                                    itemView.frameAlert.visibility = View.INVISIBLE
-
-                                } else {
-                                    // Check out if postal code match pattern
-                                    if (!itemView.etElementInput.text.matches(Regex("[0-9]{2}[-][0-9]{3}"))) {
-                                        itemView.frameAlert.visibility = View.VISIBLE
-                                    }
-                                }
-                                )
+                        (if (hasFocus) {
+                            itemView.frameAlert.visibility = View.INVISIBLE
+                            enableSave = true
+                        } else {
+                            // Check out if postal code match pattern
+                            if (!itemView.etElementInput.text.matches(Regex("[0-9]{2}[-][0-9]{3}"))) {
+                                itemView.frameAlert.visibility = View.VISIBLE
+                            }
+                            enableSave = false
+                        })
                     }
 
                     itemView.etElementInput.inputType =
