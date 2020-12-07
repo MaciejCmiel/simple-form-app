@@ -24,7 +24,9 @@ class ElementsAdapter(
     private val viewModel: MainViewModel
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-
+    /**
+     * View holder for text items
+     */
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(formElement: FormElement) {
             // Enable save only when user is focused on the field
@@ -42,24 +44,17 @@ class ElementsAdapter(
                 }
             }
 
-
             when (formElement.textType) {
                 TextType.TEXT -> {
                     itemView.etElementInput.inputType = InputType.TYPE_CLASS_TEXT
                     itemView.etElementInput.setOnFocusChangeListener { _, hasFocus ->
-                        // Couldn't simplify it as only expressions allowed here
-                        (if (hasFocus) enableSave = true
-                        else enableSave = false
-                                )
+                        (hasFocus.also { enableSave = it })
                     }
                 }
                 TextType.PHONE -> {
                     itemView.etElementInput.inputType = InputType.TYPE_CLASS_PHONE
                     itemView.etElementInput.setOnFocusChangeListener { _, hasFocus ->
-                        // Couldn't simplify it as only expressions allowed here
-                        (if (hasFocus) enableSave = true
-                        else enableSave = false
-                                )
+                        (hasFocus.also { enableSave = it })
                     }
                 }
                 TextType.POSTAL -> {
@@ -81,40 +76,41 @@ class ElementsAdapter(
                         InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS
                 }
             }
-
         }
     }
 
+    /**
+     * View holder for picture items
+     */
     class PictureViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val psOnClick: PublishSubject<Int> = PublishSubject.create()
 
         fun bind(formElement: FormElement) {
             itemView.elementName.text = formElement.name
 
-
-            val imageUri = Uri.parse(formElement.response)
-            if (imageUri != null)
-                Glide.with(itemView.context)
-                    .load(imageUri)
-                    .into(itemView.ivElementInput)
-
+            if (formElement.response.isNotEmpty()) {
+                val imageUri = Uri.parse(formElement.response)
+                if (imageUri != null)
+                    Glide.with(itemView.context)
+                        .load(imageUri)
+                        .into(itemView.ivElementInput)
+            }
             itemView.ivElementInput.setOnClickListener {
                 psOnClick.onNext(adapterPosition)
             }
         }
-
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (elements[position].type) {
-            Type.PICTURE -> 0
+            Type.PICTURE -> PICTURE_ITEM
             else -> 1
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            0 -> PictureViewHolder(
+            PICTURE_ITEM -> PictureViewHolder(
                 LayoutInflater.from(parent.context).inflate(
                     R.layout.list_element_picture, parent,
                     false
@@ -145,4 +141,7 @@ class ElementsAdapter(
         elements.addAll(list)
     }
 
+    companion object {
+        private const val PICTURE_ITEM = 0
+    }
 }
