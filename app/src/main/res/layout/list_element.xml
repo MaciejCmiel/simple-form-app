@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:layout_margin="4dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <FrameLayout
@@ -12,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/alert_border_background"
+        android:background="@color/color_red_background"
         android:visibility="invisible"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,11 +21,12 @@
         android:layout_margin="4dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="@+id/etElementInput"
         app:layout_constraintEnd_toStartOf="@+id/etElementInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/etElementInput" />
+
 
     <EditText
         android:id="@+id/etElementInput"

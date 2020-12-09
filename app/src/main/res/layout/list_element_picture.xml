@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:layout_margin="4dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <FrameLayout
@@ -22,7 +21,7 @@
         android:layout_margin="4dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="@+id/ivElementInput"
         app:layout_constraintEnd_toStartOf="@+id/ivElementInput"
         app:layout_constraintStart_toStartOf="parent"
